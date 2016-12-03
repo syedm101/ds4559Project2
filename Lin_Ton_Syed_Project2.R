@@ -21,9 +21,6 @@ sapply(blood, class)
 blood2 <- cbind(data.Normalization(blood[-5], "n4", "column"), blood[,5])
 colnames(blood2)[5] <- "donated.2007"
 
-
-
-
 #Explanation
 #This dataset contains a portion of the donor database for the Blood Transfusion Service Center in Taiwain. The center
 #drives a bus to a university every 3 months to collect blood, and the dataset is used to build a variation of the RFM
@@ -76,12 +73,32 @@ prediction <- c(0,1)[idx]
 #View results in a confusion matrix
 table(prediction, blood.test$donated.2007)
 
-#Generate table with accuracy information
-nnodes <- c(0,1,2,3)
-accuracy <- c((136+5)/(136+5+8+28), NA, NA, NA)
-nnet.accuracy <- data.frame(nnodes, accuracy)
+#Loop to generate a table with the accuracy for various numbers of nodes
+accuracy.table <- data.frame(NULL)
 
-#Plot Accuracy
-plot(nnet.accuracy,
-     xlab = "Number of Nodes", ylab = "Accuracy", main = "Number of Nodes vs. Accuracy")
+for (i in 1:7){
+  set.seed(1)
+  nnet <- neuralnet(no + yes ~ recency.mo + frequency + blood.cc + time.mo,
+                    data=nnet_blood.train, 
+                    hidden=c(i))
 
+  pred <- compute(nnet, blood.test[,-5])$net.result
+  
+  maxidx <- function(arr) {
+    return(which(arr == max(arr)))
+  }
+  idx <- apply(pred, c(1), maxidx)
+  prediction <- c(0,1)[idx]
+  
+  table(prediction, blood.test$donated.2007)
+  accuracy.table[i,1] <- i
+  accuracy.table[i,2] <- (table(prediction, blood.test$donated.2007)[1,1]+
+                            table(prediction, blood.test$donated.2007)[2,2])/(table(prediction, blood.test$donated.2007)[1,1]+
+                                                                                table(prediction, blood.test$donated.2007)[2,2] + 
+                                                                                table(prediction, blood.test$donated.2007)[1,2]+
+                                                                                table(prediction, blood.test$donated.2007)[2,1])
+}
+
+#Plot accuracy.table as a line graph to view progression
+plot(accuracy.table, type = "b",
+     xlab = "Number of Nodes in a Single Hidden Layer", ylab = "Accuracy on Test Data", main = "Number of Nodes vs. Accuracy") 
