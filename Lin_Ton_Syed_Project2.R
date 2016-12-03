@@ -101,4 +101,8 @@ for (i in 1:7){
 
 #Plot accuracy.table as a line graph to view progression
 plot(accuracy.table, type = "b",
-     xlab = "Number of Nodes in a Single Hidden Layer", ylab = "Accuracy on Test Data", main = "Number of Nodes vs. Accuracy") 
+     xlab = "Number of Nodes in a Single Hidden Layer", ylab = "Accuracy/Performance on Test Data", 
+     main = "Number of Nodes vs. Accuracy") 
+
+#Our best performance is with 7 nodes. Note that we did try 8 nodes and with 8 nodes, the nnet did not converge.
+#Overall, all the trials were witin a range of around 2.5% in terms of accuracy.
