@@ -7,8 +7,10 @@ library(clusterSim)
 
 ####Question 1####
 #Import the data and assign meaningful attribute names
-blood <- read.csv("BloodTransfusion.txt", stringsAsFactors = FALSE, header = TRUE)
 
+blood <- read.csv("BloodTransfusion.txt", stringsAsFactors = FALSE, header = TRUE)
+colnames(blood) <- c("recency.mo", "frequency", "blood.cc", "time.mo", "donated.2007")
+#Assign appropriate column names
 #Make the classification column a factor
 blood$donated.2007 <- as.factor(blood$donated.2007)
 
@@ -17,9 +19,9 @@ sapply(blood, class)
 
 #Normalize each column of the data because of the wide range of numbers found in the dataset, particularly with the volume in cc's
 blood2 <- cbind(data.Normalization(blood[-5], "n4", "column"), blood[,5])
+colnames(blood2)[5] <- "donated.2007"
 
-#Assign appropriate column names
-colnames(blood2) <- c("recency.mo", "frequency", "blood.cc", "time.mo", "donated.2007")
+
 
 
 #Explanation
@@ -82,3 +84,4 @@ nnet.accuracy <- data.frame(nnodes, accuracy)
 #Plot Accuracy
 plot(nnet.accuracy,
      xlab = "Number of Nodes", ylab = "Accuracy", main = "Number of Nodes vs. Accuracy")
+
