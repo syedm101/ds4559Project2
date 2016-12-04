@@ -53,9 +53,10 @@ names(nnet_blood.train)[7] <- 'yes'
 head(nnet_blood.train)
 
 ## Create neural network model
+set.seed(1)
 nnet <- neuralnet(no + yes ~ recency.mo + frequency + blood.cc + time.mo,
                 data=nnet_blood.train, 
-                hidden=c(1))
+                hidden=c(3))
 
 #Generate the neural net output plot
 plot(nnet)
