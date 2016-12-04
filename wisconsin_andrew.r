@@ -11,29 +11,43 @@ bc[,9] <- as.factor(bc[,9])
 bc[,10] <- as.factor(bc[,10])
 bc[,11] <- as.factor(bc[,11])
 
-colnames() <-
+#colnames() <-
 bc <- subset(bc, V7!="?")
 
 
 library(randomForest)
 library(ROCR)
+set.seed(1234)
 
-## Create randomForest model
-rf_output=randomForest(x=usedcars[,1:5], y=usedcars[,6], importance = TRUE, ntree = 1000, proximity=TRUE)
-rf_output
+library(cvTools) #run the above line if you don't have this library
 
-## Calculate predictions in terms of votes (percentage of trees that voted for particular class)
-predictions=as.vector(rf_output$votes[,2])
-## Pred is comparing numerical percentages to binary responses.  This is what we need to create ROC curve
-pred=prediction(predictions,usedcars[,6])
+k <- 5 #the number of folds
+dataset <- bc
+dataset_rand <- dataset[order(runif(683)),]
+
+## Divide data into k folds:
+
+folds <- cvFolds(NROW(dataset), K=k)
+
+dataset_rand$holdoutpred <- rep(0,nrow(bc))
+
+for(i in 1:k){
+  train_data <- dataset_rand[folds$subsets[folds$which != i], ] #Set the training set
+  validation_data <- dataset_rand[folds$subsets[folds$which == i], ] #Set the validation set
+  
+  newmod <- randomForest(x=bc[,2:10], y=bc[,11], importance = TRUE, ntree = 1000, proximity=TRUE) #Get your new linear model (just fit on the train data)
+  newpred <- predict(newmod,newdata=validation_data[,-11]) #Get the predicitons for the validation set (from the model just fit on the train data)
+  
+  dataset_rand[folds$subsets[folds$which == i], ]$holdoutpred <- newpred #Put the hold out prediction in the data set for later use.
+}
+
+table(dataset_rand$holdoutpred, dataset_rand[,11])
+predictions=as.vector(newmod$votes[,2])
+pred=prediction(predictions,bc[,11])
 
 perf_AUC=performance(pred,"auc") #Calculate the AUC value
 AUC=perf_AUC@y.values[[1]]
-
+AUC
 perf_ROC=performance(pred,"tpr","fpr") #plot the actual ROC curve
 plot(perf_ROC, main="ROC plot")
 text(0.5,0.5,paste("AUC = ",format(AUC, digits=5, scientific=FALSE)))
-
-## Explore with me;
-perf_ROC
-perf_AUC
