@@ -1,3 +1,8 @@
+#DS 4559 Project 2
+#Nathan Lin, Andrew Ton, Mansoor Syed
+
+####Question 2####
+
 #Read data from local folder, everything as a character to ease factoring
 bc<- read.csv("Wisconsin+BC+Data.txt", header=FALSE, colClasses = "character")
 View(bc)
