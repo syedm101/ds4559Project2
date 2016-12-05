@@ -21,12 +21,7 @@ sapply(blood, class)
 blood2 <- cbind(data.Normalization(blood[-5], "n4", "column"), blood[,5])
 colnames(blood2)[5] <- "donated.2007"
 
-#Explanation
-#This dataset contains a portion of the donor database for the Blood Transfusion Service Center in Taiwain. The center
-#drives a bus to a university every 3 months to collect blood, and the dataset is used to build a variation of the RFM
-#(Recency, Frequency, Monetary Value) marketing model in analyzing customer value. In this case, the "customer" is a blood
-#doner. Blood donations are vital for emergency and elective surgeries (there was recently a shortage in the US), so identifying
-#target doners and those who may deliver the best future value is important for a blood bank.
+#See attached Word document for an explanation of the dataset
 
 #Classification with a neural net. Modified the sample code provided
 #Set a seed, determine the sample size, and establish the sample command
@@ -53,6 +48,7 @@ names(nnet_blood.train)[7] <- 'yes'
 head(nnet_blood.train)
 
 ## Create neural network model
+set.seed(1)
 nnet <- neuralnet(no + yes ~ recency.mo + frequency + blood.cc + time.mo,
                 data=nnet_blood.train, 
                 hidden=c(1))
@@ -72,6 +68,7 @@ prediction <- c(0,1)[idx]
 
 #View results in a confusion matrix
 table(prediction, blood.test$donated.2007)
+#The accuracy with one node and one hidden layer was 79.66%
 
 #Loop to generate a table with the accuracy for various numbers of nodes
 accuracy.table <- data.frame(NULL)
