@@ -69,7 +69,7 @@ plot(perf_ROC, main="ROC plot")
 library(randomForest)
 set.seed(1234)
 
-k <- 5 #the number of folds
+k <- 10 #the number of folds
 dataset <- bc
 dataset_rand <- dataset[order(runif(683)),]
 
