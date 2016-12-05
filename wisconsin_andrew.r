@@ -11,9 +11,8 @@ bc[,9] <- as.factor(bc[,9])
 bc[,10] <- as.factor(bc[,10])
 bc[,11] <- as.factor(bc[,11])
 
-#colnames() <-
 bc <- subset(bc, V7!="?")
-
+colnames(bc) <- c('id','Clump Thickness', 'Uniformity of Cell Size', 'Uniformity of Cell Shape', 'Marginal Adhesion', 'Single Epithelial Cell Size ', 'Bare Nuclei', 'Bland Chromatin ','Normal Nucleoli', 'Mitoses', 'Class')
 
 library(randomForest)
 library(ROCR)
